@@ -38,17 +38,27 @@ namespace MauiAppTempoAgora
 
                         lbl_res.Text = dados_previsao;
 
-                    } else
+                    }
+                    else
                     {
-                        lbl_res.Text = "Sem dados de previsão";
+                        await DisplayAlert("Aviso", "Cidade não encontrada. Verifique o nome digitado.", "OK");
                     }
 
-                } else
+                }
+                else
                 {
                     lbl_res.Text = "Preencha a cidade ";
                 }
-
-            } catch (Exception ex)
+            }
+            catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                await DisplayAlert("Aviso", "Cidade não foi encontrada. Verifique o nome.", "OK");
+            }
+            catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.RequestTimeout || ex.StatusCode == System.Net.HttpStatusCode.ServiceUnavailable)
+            {
+                await DisplayAlert("Erro de conexão", "Verifique sua conexão com a internet.", "OK");
+            }
+            catch (Exception ex)
             {
                 await DisplayAlert("Ops", ex.Message, "OK");
             }
